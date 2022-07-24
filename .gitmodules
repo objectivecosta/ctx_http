@@ -1,0 +1,6 @@
+[submodule "deps/libcurl/curl"]
+	path = deps/libcurl/curl
+	url = https://github.com/curl/curl.git
+[submodule "deps/libcurl/openssl"]
+	path = deps/libcurl/openssl
+	url = https://github.com/openssl/openssl.git

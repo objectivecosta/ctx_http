@@ -1,0 +1,90 @@
+#!/usr/bin/python3
+import list_files
+
+
+android_archs = [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86",
+    "x86_64"
+]
+
+cmake_header = """
+cmake_minimum_required(VERSION 3.10)
+project(CTXHTTP)
+set(NAME CTXHTTP)
+"""
+
+def alpine_targets():
+    return "add_library(CTXHTTP-alpine STATIC)\nset_property(TARGET CTXHTTP-alpine PROPERTY CXX_STANDARD 14)"
+
+def android_targets():
+    targets = ""
+    for arch in android_archs:
+        targets = targets + "\n"
+        targets = targets + "add_library(CTXHTTP-android-{} STATIC)".format(arch) + "\n"
+        targets = targets + "set_property(TARGET CTXHTTP-android-{} PROPERTY CXX_STANDARD 14)".format(arch) + "\n"
+    return targets
+
+def alpine_options():
+    return """
+target_link_libraries(CTXHTTP-alpine
+"-framework Cocoa"
+"-framework AppKit"
+"-framework CoreData"
+"-framework Foundation"
+)
+target_compile_options(CTXHTTP-alpine PUBLIC -x objective-c++)
+target_compile_definitions(CTXHTTP-alpine PUBLIC IS_ALPINE)
+    """
+
+def android_options():
+    options = ""
+    for arch in android_archs:
+        options = options + "\n"
+        options = options + android_options_for_arch(arch)
+    return options
+
+def android_options_for_arch(arch):
+    return """
+target_compile_definitions(CTXHTTP-android-{} PUBLIC IS_ANDROID)
+target_include_directories(CTXHTTP-android-{} PUBLIC ./deps/libcurl/build/openssl/{}/include)
+target_link_libraries(CTXHTTP-android-{} PUBLIC ./deps/libcurl/build/openssl/{}/lib/libcurl.a)
+    """.format(arch, arch, arch, arch, arch, arch)
+
+def alpine_sources():
+    sources = "target_sources(CTXHTTP-alpine PUBLIC"
+    for file in list_files.list_files():
+        sources = sources + "\n"
+        sources = sources + "\"{}\"".format(file)
+    sources = sources + ")"
+    return sources
+
+def android_sources():
+    sources = ""
+    for arch in android_archs:
+        sources = sources + "\n"
+        sources = sources + android_sources_for_arch(arch)
+    return sources
+
+def android_sources_for_arch(arch):
+    sources = "target_sources(CTXHTTP-android-{} PUBLIC".format(arch)
+    for file in list_files.list_files():
+        if ".mm" not in file:
+            sources = sources + "\n"
+            sources = sources + "\"{}\"".format(file)
+    sources = sources + ")"
+    return sources
+
+final_file = cmake_header
+final_file = final_file + alpine_targets()
+final_file = final_file + android_targets()
+
+final_file = final_file + alpine_options()
+final_file = final_file + android_options()
+
+final_file = final_file + alpine_sources()
+final_file = final_file + android_sources()
+
+print(final_file)
+

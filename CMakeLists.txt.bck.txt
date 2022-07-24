@@ -1,0 +1,54 @@
+cmake_minimum_required(VERSION 3.10)
+project(CTXHTTP)
+set(NAME CTXHTTP) 
+add_library(${NAME}-alpine STATIC)
+add_library(${NAME}-android STATIC)
+
+set_property(TARGET ${NAME}-alpine PROPERTY CXX_STANDARD 14)
+set_property(TARGET ${NAME}-android PROPERTY CXX_STANDARD 14)
+
+# Objective-C++ support here
+target_link_libraries(${NAME}-alpine
+    "-framework Cocoa"
+    "-framework AppKit"
+    "-framework CoreData"
+    "-framework Foundation"
+)
+
+target_compile_definitions(${NAME}-alpine PUBLIC IS_ALPINE)
+target_compile_definitions(${NAME}-android PUBLIC IS_ANDROID)
+
+# set(TARGET ${NAME}-alpine PROPERTY CMAKE_CXX_FLAGS "-x objective-c++")
+# set(TARGET ${NAME}-alpine PROPERTY CMAKE_C_FLAGS "-x objective-c")
+
+target_compile_options(${NAME}-alpine PUBLIC -x objective-c++)
+
+# target_compile_options(${NAME}-alpine PUBLIC "$<COMPILE_LANGUAGE:CXX>:-x objective-c++")
+# target_compile_options(${NAME}-alpine PUBLIC "$<COMPILE_LANGUAGE:C>:-x objective-c")
+
+# set(CMAKE_CXX_FLAGS "-x objective-c++")
+# set(CMAKE_C_FLAGS "-x objective-c")
+
+# Main Project. You can run `list_files.sh` to get them all.
+target_sources(${NAME}-alpine PUBLIC 
+"./src/common/DataWrapper.cpp"
+"./src/http/models/Request.cpp"
+"./src/http/client/ClientImpl.cpp"
+"./src/http/client/iphone/AlpineClientImpl.mm"
+"./src/common/DataWrapper.hpp"
+"./src/http/client/Client.hpp"
+)
+
+target_include_directories(${NAME}-android PUBLIC ./deps/libcurl/build/curl/include)
+target_include_directories(${NAME}-android PUBLIC ./deps/libcurl/build/openssl/include)
+target_link_libraries(${NAME}-android PUBLIC )
+
+target_sources(${NAME}-android PUBLIC 
+"./src/common/DataWrapper.cpp"
+"./src/http/models/Request.cpp"
+"./src/http/client/ClientImpl.cpp"
+# "./src/http/client/iphone/AlpineClientImpl.mm"
+"./src/common/DataWrapper.hpp"
+"./src/http/client/Client.hpp"
+)
+

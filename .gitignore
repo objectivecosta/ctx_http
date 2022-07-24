@@ -1,0 +1,5 @@
+.vscode/
+build/
+deps/libcurl/build/
+deps/libcurl/curl/build/
+deps/libcurl/openssl/build
