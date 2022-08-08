@@ -26,7 +26,7 @@ def list_files():
         for name in files:
             for file_end in file_ends:
                 if file_end in name:
-                    matches.append(os.path.join(path, name))
+                    matches.append(os.path.realpath(os.path.join(path, name)))
     
     return matches
 
