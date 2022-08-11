@@ -59,6 +59,7 @@ def android_options(arch):
     text += "# target_include_directories(CTXHTTP-android PUBLIC {})\n".format(java_include())
     text += "target_include_directories(CTXHTTP-android PUBLIC {}/deps/libcurl/build/curl/{}/include)\n".format(current_path(), arch)
     text += "target_link_libraries(CTXHTTP-android PUBLIC {}/deps/libcurl/build/curl/{}/lib/libcurl.a)\n".format(current_path(), arch)
+    text += "target_include_directories(CTXHTTP-alpine PUBLIC \"${Protobuf_INCLUDE_DIRS}\")"
     return text
 
 def android_sources():

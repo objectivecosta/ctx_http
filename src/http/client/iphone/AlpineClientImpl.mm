@@ -39,7 +39,7 @@ private:
         return CTXCommon::DataWrapper(alpineData.bytes, (int64_t)alpineData.length);
     }
     
-    [[nodiscard]] std::unique_ptr<Response> _responseFrom(std::unique_ptr<Request> request, NSHTTPURLResponse* alpineResponse, NSData* data) {
+    [[nodiscard]] std::unique_ptr<HTTPResponse> _responseFrom(std::unique_ptr<Request> request, NSHTTPURLResponse* alpineResponse, NSData* data) {
         
 //        auto res = ;
         
@@ -70,7 +70,7 @@ public:
 //        
 //    }
     
-    void performRequest(std::unique_ptr<Request> request, std::function<void(std::unique_ptr<Response> response)> callback) override {
+        virtual void performRequest(std::unique_ptr<HTTPRequest> request, std::function<void(std::unique_ptr<HTTPResponse> response)> callback) override {
         NSMutableURLRequest* alpineRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:_alpineStringFromCppString(request->url)] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:timeout_interval];
         
         for (auto &header : *(request->headers)) {

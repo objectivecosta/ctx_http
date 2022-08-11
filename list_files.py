@@ -17,7 +17,9 @@ def list_files():
     file_ends = [
         ".hpp",
         ".mm",
-        ".cpp"
+        ".cpp",
+        ".cc",
+        ".h"
     ]
 
     matches = []
