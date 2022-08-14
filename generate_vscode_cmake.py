@@ -7,10 +7,6 @@ import shutil
 def current_path():
     return os.path.dirname(os.path.realpath(__file__))
 
-alpine_archs = [
-    "combined"
-]
-
 cmake_header = """
 cmake_minimum_required(VERSION 3.10)
 project(CTXHTTP)
@@ -63,19 +59,7 @@ def alpine_sources():
     sources = sources + ")"
     return sources
 
-for alpine_toolchain in alpine_archs:
-    shutil.rmtree("./build/alpine/{}".format(alpine_toolchain), ignore_errors=True)
-    os.makedirs("./build/alpine/{}".format(alpine_toolchain))
-    f = open("./build/alpine/{}/CMakeLists.txt".format(alpine_toolchain), "a")
-    f.write(cmake_file())
-    f.close()
-
-    c = open("./build/alpine/{}/cmake.sh".format(alpine_toolchain), "a")
-    c.write(cmake_sh())
-    c.close()
-
-    b = open("./build/alpine/{}/build.sh".format(alpine_toolchain), "a")
-    b.write(build_script())
-    b.close()
-
+f = open("./CMakeLists.txt", "w")
+f.write(cmake_file())
+f.close()
 

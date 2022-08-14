@@ -11,8 +11,7 @@
 
 #include <stdio.h>
 #include "../models/Request.cpp"
-#include "../../protoc/proto/http_request.pb.h"
-#include "../../protoc/proto/http_response.pb.h"
+#include "../../common/DataWrapper.hpp"
 
 const static int timeout_interval = 30;
 
@@ -20,7 +19,9 @@ namespace CTXHTTP {
 
 class Client {
 public:
-    virtual void performRequest(std::unique_ptr<HTTPRequest> request, std::function<void(std::unique_ptr<HTTPResponse> response)> callback) = 0;
+    // request: http_request.pb
+    // response: http_response.pb
+    virtual void performRequest(std::unique_ptr<CTXCommon::DataWrapper> request, std::function<void(std::unique_ptr<CTXCommon::DataWrapper> response)> callback) = 0;
     virtual ~Client() = default;
 };
 

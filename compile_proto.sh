@@ -1,2 +1,2 @@
 #!/bin/sh
-protoc -I=./src --cpp_out=./src/protoc ./src/proto/*.proto
+protoc --proto_path=./proto/ --cpp_out=./src/proto/ ./proto/*.proto

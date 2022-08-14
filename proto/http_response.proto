@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ctxhttp;
+package CTXHTTP;
 
 message HTTPResponse {
   string url = 1;
