@@ -74,18 +74,18 @@ def android_sources():
 for arch in android_archs:
     perm = '777'
 
-    shutil.rmtree("./build/android/{}".format(arch), ignore_errors=True)
-    os.makedirs("./build/android/{}".format(arch))
-    f = open("./build/android/{}/CMakeLists.txt".format(arch), "a")
+    shutil.rmtree("./generated/android/{}".format(arch), ignore_errors=True)
+    os.makedirs("./generated/android/{}".format(arch))
+    f = open("./generated/android/{}/CMakeLists.txt".format(arch), "a")
     f.write(cmake_file(arch))
     f.close()
 
-    c = open("./build/android/{}/cmake.sh".format(arch), "a")
+    c = open("./generated/android/{}/cmake.sh".format(arch), "a")
     c.write(cmake_sh())
     c.close()
-    os.chmod("./build/android/{}/cmake.sh".format(arch), int(perm, base=8))
+    os.chmod("./generated/android/{}/cmake.sh".format(arch), int(perm, base=8))
 
-    b = open("./build/android/{}/build.sh".format(arch), "a")
+    b = open("./generated/android/{}/build.sh".format(arch), "a")
     b.write(build_script())
     b.close()
-    os.chmod("./build/android/{}/build.sh".format(arch), int(perm, base=8))
+    os.chmod("./generated/android/{}/build.sh".format(arch), int(perm, base=8))

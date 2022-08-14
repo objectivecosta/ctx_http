@@ -22,7 +22,7 @@ pkg_check_modules(PROTBUF REQUIRED IMPORTED_TARGET protobuf)
 """
 
 def cmake_sh():
-    return "cmake ./ -G Xcode -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.toolchain.cmake -DPLATFORM=OS64COMBINED"
+    return "cmake ./ -G Xcode -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.toolchain.cmake -DPLATFORM=OS64COMBINED_ASI"
 
 def build_script():
     return "make;"
@@ -64,17 +64,17 @@ def alpine_sources():
     return sources
 
 for alpine_toolchain in alpine_archs:
-    shutil.rmtree("./build/alpine/{}".format(alpine_toolchain), ignore_errors=True)
-    os.makedirs("./build/alpine/{}".format(alpine_toolchain))
-    f = open("./build/alpine/{}/CMakeLists.txt".format(alpine_toolchain), "a")
+    shutil.rmtree("./generated/alpine/{}".format(alpine_toolchain), ignore_errors=True)
+    os.makedirs("./generated/alpine/{}".format(alpine_toolchain))
+    f = open("./generated/alpine/{}/CMakeLists.txt".format(alpine_toolchain), "a")
     f.write(cmake_file())
     f.close()
 
-    c = open("./build/alpine/{}/cmake.sh".format(alpine_toolchain), "a")
+    c = open("./generated/alpine/{}/cmake.sh".format(alpine_toolchain), "a")
     c.write(cmake_sh())
     c.close()
 
-    b = open("./build/alpine/{}/build.sh".format(alpine_toolchain), "a")
+    b = open("./generated/alpine/{}/build.sh".format(alpine_toolchain), "a")
     b.write(build_script())
     b.close()
 
