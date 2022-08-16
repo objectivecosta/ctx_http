@@ -12,9 +12,11 @@ cmake_minimum_required(VERSION 3.10)
 project(CTXHTTP)
 set(NAME CTXHTTP)
 
-# the `pkg_check_modules` function is created with this call
-find_package(PkgConfig REQUIRED) 
-pkg_check_modules(PROTBUF REQUIRED IMPORTED_TARGET protobuf)
+# add_subdirectory(./deps/protobuf)
+
+# # the `pkg_check_modules` function is created with this call
+find_package(Protobuf REQUIRED) 
+# pkg_check_modules(PROTBUF REQUIRED IMPORTED_TARGET protobuf)
 """
 
 def cmake_sh():
@@ -43,11 +45,11 @@ target_link_libraries(CTXHTTP-alpine
 "-framework AppKit"
 "-framework CoreData"
 "-framework Foundation"
-PkgConfig::PROTBUF
+protobuf
 )
 target_compile_options(CTXHTTP-alpine PUBLIC -x objective-c++)
 target_compile_definitions(CTXHTTP-alpine PUBLIC IS_ALPINE)
-# target_include_directories(CTXHTTP-alpine PUBLIC "${Protobuf_INCLUDE_DIRS}")
+target_include_directories(CTXHTTP-alpine PUBLIC ${Protobuf_INCLUDE_DIRS})
 """
 
 def alpine_sources():

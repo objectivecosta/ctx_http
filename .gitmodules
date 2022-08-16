@@ -4,3 +4,6 @@
 [submodule "deps/libcurl/openssl"]
 	path = deps/libcurl/openssl
 	url = https://github.com/openssl/openssl.git
+[submodule "deps/protobuf"]
+	path = deps/protobuf
+	url = https://github.com/protocolbuffers/protobuf.git
