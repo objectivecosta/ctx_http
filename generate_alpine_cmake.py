@@ -17,22 +17,36 @@ project(CTXHTTP)
 set(NAME CTXHTTP)
 
 # the `pkg_check_modules` function is created with this call
-find_package(PkgConfig REQUIRED) 
-pkg_check_modules(PROTBUF REQUIRED IMPORTED_TARGET protobuf)
+# pkg_check_modules(PROTBUF REQUIRED IMPORTED_TARGET protobuf)
 """
 
 def cmake_sh():
-    return "cmake ./ -G Xcode -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.toolchain.cmake -DPLATFORM=OS64COMBINED_ASI"
+    return """
+cp -R ../../../deps ./
+cmake ./ -G Xcode -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.toolchain.cmake -DPLATFORM=OS64COMBINED_ASI
+"""
 
 def build_script():
     return "make;"
 
 def cmake_file():
     cmake_file_txt = cmake_header
+    cmake_file_txt += alpine_deps()
+    cmake_file_txt += alpine_packages()
     cmake_file_txt += alpine_targets()
     cmake_file_txt += alpine_options()
     cmake_file_txt += alpine_sources()
     return cmake_file_txt
+
+def alpine_deps():
+    return "add_subdirectory(./deps/protobuf)\n"
+
+def alpine_packages():
+    return """
+find_package(Protobuf REQUIRED)
+target_include_directories(CTXHTTP PRIVATE ${./deps/protobuf/src/google/protobuf})
+"""
+    
 
 def alpine_targets():
     targets = "add_library(CTXHTTP-alpine STATIC)\n"
@@ -47,11 +61,11 @@ target_link_libraries(CTXHTTP-alpine
 "-framework AppKit"
 "-framework CoreData"
 "-framework Foundation"
-PkgConfig::PROTBUF
+protobuf
 )
 target_compile_options(CTXHTTP-alpine PUBLIC -x objective-c++)
 target_compile_definitions(CTXHTTP-alpine PUBLIC IS_ALPINE)
-# target_include_directories(CTXHTTP-alpine PUBLIC "${Protobuf_INCLUDE_DIRS}")
+target_include_directories(CTXHTTP-alpine PUBLIC ${Protobuf_INCLUDE_DIRS})
 """
 
 def alpine_sources():

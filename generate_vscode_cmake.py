@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.10)
 project(CTXHTTP)
 set(NAME CTXHTTP)
 
-# add_subdirectory(./deps/protobuf)
+add_subdirectory(./deps/protobuf)
 
 # # the `pkg_check_modules` function is created with this call
 find_package(Protobuf REQUIRED) 
