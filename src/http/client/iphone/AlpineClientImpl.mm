@@ -46,7 +46,7 @@ private:
     [[nodiscard]] std::unique_ptr<CTXHTTP::HTTPRequest> _requestFrom(std::unique_ptr<CTXCommon::DataWrapper> request) {
         CTXHTTP::HTTPRequest *r = new CTXHTTP::HTTPRequest();
         if (!r->ParseFromArray(request->_data, request->_size)) {
-            std::cerr << "Failed to parse address book." << std::endl;
+            std::cerr << "Failed to parse request." << std::endl;
         }
         return std::unique_ptr<CTXHTTP::HTTPRequest>(r);
     }
@@ -60,10 +60,16 @@ private:
 //   optional int32 tag = 6;
 // }
     
-    [[nodiscard]] std::unique_ptr<CTXHTTP::HTTPResponse> _responseFrom(int request_tag, NSHTTPURLResponse* alpineResponse, NSData* data) {
+    [[nodiscard]] std::unique_ptr<CTXHTTP::HTTPResponse> _responseFrom(
+                                                                       int request_tag,
+                                                                       std::string method,
+                                                                       NSHTTPURLResponse* alpineResponse,
+                                                                       NSData* data
+                                                                       ) {
         CTXHTTP::HTTPResponse *response = new CTXHTTP::HTTPResponse();
         response->set_url(_cppStringFromAlpineString([[alpineResponse URL] absoluteString]));
-        response->set_method(_cppStringFromAlpineString(@"GET"));
+        response->set_method(method);
+        response->set_statuscode([alpineResponse statusCode]);
         response->set_body(data.bytes, (int64_t)data.length);
         return std::unique_ptr<CTXHTTP::HTTPResponse>(response);
     }
@@ -93,8 +99,14 @@ public:
         
         // __block std::unique_ptr<Request> bl_request = std::move(request);
         int tag = req->tag();
+        std::string method = req->method();
+
         NSURLSessionDataTask* task = [this->session dataTaskWithRequest:alpineRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable alpineResponse, NSError * _Nullable error) {
-         std::unique_ptr<CTXHTTP::HTTPResponse> response = _responseFrom(tag, (NSHTTPURLResponse*)alpineResponse, data);
+         std::unique_ptr<CTXHTTP::HTTPResponse> response = _responseFrom(
+                                                                         tag,
+                                                                         method,
+                                                                         (NSHTTPURLResponse*)alpineResponse,
+                                                                         data);
          int size = response->ByteSizeLong();
          char* array = new char[size];
          response->SerializeToArray(array, size);
