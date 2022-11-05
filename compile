@@ -1,0 +1,87 @@
+#!/usr/bin/env ruby -w
+
+require 'fileutils'
+
+# system("printenv | sort")
+
+AppProjectName = ENV['PROJECT_NAME']
+AppBuildRootDir = '/Users/rafaelcosta/projekte/' # ENV['AWL_CMAKE_BUILDS']
+AppBuildDirPath = ENV['BUILT_PRODUCTS_DIR']
+AppPlatform = ENV['PLATFORM_NAME']
+AppBuildConfig = ENV['CONFIGURATION']
+AppTargetDeviceId = ENV['TARGET_DEVICE_IDENTIFIER']
+if AppProjectName.nil?
+   raise "❌ Variable \"PROJECT_NAME\" is not passed to script."
+end
+if AppBuildRootDir.nil?
+   raise "❌ Variable \"AWL_CMAKE_BUILDS\" is not passed to script."
+end
+if AppBuildDirPath.nil?
+   raise "❌ Variable \"BUILT_PRODUCTS_DIR\" is not passed to script."
+end
+if AppPlatform.nil?
+   raise "❌ Variable \"PLATFORM_NAME\" is not passed to script."
+end
+if AppBuildConfig.nil?
+   raise "❌ Variable \"CONFIGURATION\" is not passed to script."
+end
+
+WhiteListedVars = ["PATH", "HOME"]
+ENV.keys.each { |key|
+   if !WhiteListedVars.include? key
+      ENV[key] = nil
+   end
+}
+AppNewEnvVars = `bash -l -c printenv`.strip.split("\n")
+AppNewEnvVars.each { |var|
+   components = var.split("=", 2)
+   key = components[0]
+   value = components[1]
+   ENV[key] = value
+}
+
+# system("printenv | sort")
+
+AppCmakeBuildDirPath = "#{AppBuildRootDir}/#{AppProjectName}"
+AppCmakeCacheFilePath = "#{AppCmakeBuildDirPath}/CMakeCache.txt"
+AppCmakeStatusFilePath = "#{AppBuildDirPath}/CMakeStatus.txt"
+
+if !File.exist?(AppCmakeStatusFilePath) && Dir.exist?(AppCmakeBuildDirPath)
+   puts "✅ Deleting previous build at \"#{AppCmakeBuildDirPath}\"..."
+   FileUtils.rm_rf(AppCmakeBuildDirPath)
+end
+
+if !File.exist?(AppCmakeCacheFilePath)
+   puts "✅ Generating Cmake for Platform \"#{AppPlatform}\"..."
+   cmd = "/opt/homebrew/bin/cmake -G Xcode -B \"#{AppCmakeBuildDirPath}\" -DCMAKE_Swift_COMPILER_FORCED=true -DCMAKE_BUILD_TYPE=#{AppBuildConfig} "
+   if AppPlatform == "macosx"
+      cmd += "-DCMAKE_OSX_DEPLOYMENT_TARGET=10.13"
+   elsif
+      cmd += "-DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -DCMAKE_SYSTEM_NAME=iOS"
+   end
+   puts cmd
+   system cmd
+   File.write(AppCmakeStatusFilePath, 'This file used just as a status flag to clean Cmake.')
+end
+
+puts "✅ Building Cmake for Platform \"#{AppPlatform}\" ..."
+
+cmd = "set -euf -o pipefail && cd \"#{AppCmakeBuildDirPath}\" && /opt/homebrew/bin/cmake --build \"#{AppCmakeBuildDirPath}\" -- -quiet CONFIGURATION_BUILD_DIR=\"#{AppBuildDirPath}\" "
+if AppPlatform == "macosx"
+   cmd += "-destination 'platform=OS X,arch=x86_64'"
+elsif AppPlatform == "iphonesimulator"
+   if AppTargetDeviceId.nil?
+      raise "❌ Variable \"TARGET_DEVICE_IDENTIFIER\" is not passed to script."
+   end
+   cmd += "-sdk iphonesimulator -destination 'platform=iOS Simulator,id=#{AppTargetDeviceId}'"
+else
+   if AppTargetDeviceId.nil?
+      cmd += "-sdk iphoneos -destination generic/platform=iOS"
+   else
+      cmd += "-sdk iphoneos -destination 'platform=iOS,id=#{AppTargetDeviceId}'"
+   end
+end
+
+# cmd += " | xcpretty"
+puts cmd
+system(cmd) or exit 1
