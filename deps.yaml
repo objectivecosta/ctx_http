@@ -1,0 +1,3 @@
+dependencies:
+  protobuf: v21.9
+  libcurl: *
