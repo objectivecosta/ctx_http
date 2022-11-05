@@ -5,7 +5,7 @@ set(NAME CTXHTTP)
 option(alpine "Option to build for alpine devices (iOS, iPadOS, etc...)" OFF)
 option(android "Option to build for android devices" OFF)
 
-add_subdirectory(./deps/google/protobuf EXCLUDE_FROM_ALL)
+add_subdirectory(./deps/protobuf EXCLUDE_FROM_ALL)
 add_subdirectory(./src)
 
 # target_include_directories(CTXHTTP PUBLIC ./deps/google/protobuf/src/)
