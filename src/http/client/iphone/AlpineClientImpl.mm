@@ -79,12 +79,12 @@ public:
     AlpineClientImpl() {
         this->session = [NSURLSession sharedSession];
     }
+
+    virtual std::string description() override {
+        return std::string("AlpineClientImpl");
+    }
     
-//    ~AlpineClientImpl() override {
-//        
-//    }
-    
-        virtual void performRequest(std::unique_ptr<DataWrapper> request, std::function<void(std::unique_ptr<DataWrapper> response)> callback) override {
+    virtual void performRequest(std::unique_ptr<DataWrapper> request, std::function<void(std::unique_ptr<DataWrapper> response)> callback) override {
         auto req = _requestFrom(std::move(request));
 
         NSMutableURLRequest* alpineRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:_alpineStringFromCppString(req->url())] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:timeout_interval];

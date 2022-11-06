@@ -1,0 +1,1 @@
+target_sources(Tests PUBLIC ${TEST_ROOT_DIR}/mocks/MockedClient.hpp ${TEST_ROOT_DIR}/mocks/MockedClient.cpp)

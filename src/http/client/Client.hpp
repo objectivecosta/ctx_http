@@ -22,6 +22,7 @@ public:
     // request: http_request.pb
     // response: http_response.pb
     virtual void performRequest(std::unique_ptr<CTXCommon::DataWrapper> request, std::function<void(std::unique_ptr<CTXCommon::DataWrapper> response)> callback) = 0;
+    virtual std::string description() = 0;
     virtual ~Client() = default;
 };
 

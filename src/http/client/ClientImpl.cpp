@@ -18,7 +18,7 @@ CTXHTTP::Client* CTXHTTP::ClientProvider::provideClient() {
 
 #if IS_ANDROID
 CTXHTTP::Client* CTXHTTP::ClientProvider::provideClient() {
-  exit(0);
+  return nullptr;
 }
 #endif
 

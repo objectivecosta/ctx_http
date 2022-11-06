@@ -2,11 +2,17 @@ cmake_minimum_required(VERSION 3.10)
 project(CTXHTTP)
 set(NAME CTXHTTP)
 
+set(APP_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(SRC_ROOT_DIR ${APP_ROOT_DIR}/src)
+set(TEST_ROOT_DIR ${APP_ROOT_DIR}/tests)
+
 option(alpine "Option to build for alpine devices (iOS, iPadOS, etc...)" OFF)
 option(android "Option to build for android devices" OFF)
+option(tests "Option to build for testing" OFF)
 
 add_subdirectory(./deps/protobuf EXCLUDE_FROM_ALL)
 add_subdirectory(./src)
+add_subdirectory(./tests)
 
 # target_include_directories(CTXHTTP PUBLIC ./deps/google/protobuf/src/)
 
@@ -20,3 +26,7 @@ add_subdirectory(./src)
 # add_library(CTXHTTP-alpine STATIC)
 
 # find_package(Protobuf REQUIRED)
+
+if (tests)
+message("Building for testing")
+endif()

@@ -11,6 +11,9 @@
 #include <vector>
 #include "../../common/DataWrapper.hpp"
 
+#ifndef Request_cpp
+#define Request_cpp
+
 namespace CTXHTTP {
 class Header {
 public:
@@ -63,3 +66,5 @@ public:
 }
 
 
+
+#endif /* Request_cpp */
