@@ -1,37 +1,29 @@
 #include "MockedClient.hpp"
 
-class MockedClient : public CTXHTTP::Client {
+CTXHTTP::Client* CTXHTTP::ClientProvider::provideClient() {
+  return new Mock::MockedClient();
+}
+
+class Mock::MockedClient::Impl {
 public:
-    MockedClient();
-    void performRequest(std::unique_ptr<CTXCommon::DataWrapper> request, std::function<void(std::unique_ptr<CTXCommon::DataWrapper> response)> callback);
-    std::string description();
+   bool hasInvokedPerformValue;
+   std::shared_ptr<CTXCommon::DataWrapper> performInvokedWith;
 };
 
-CTXHTTP::Client* CTXHTTP::ClientProvider::provideClient() {
-  return new MockedClient();
+Mock::MockedClient::MockedClient() : _pimpl (std::make_unique<Mock::MockedClient::Impl>( Mock::MockedClient::Impl() )) {
+   this->_pimpl->hasInvokedPerformValue = false;
 }
 
-// class CTXHTTP::MockedClient::Impl {
-// public:
-//    bool hasInvokedPerformValue;
-//    std::shared_ptr<CTXCommon::DataWrapper> performInvokedWith;
-// };
-
-MockedClient()
-{
-  printf("%i", 123);
+bool Mock::MockedClient::hasInvokedPerform() {
+  return this->_pimpl->hasInvokedPerformValue;
 }
-
-// bool CTXHTTP::MockedClient::hasInvokedPerform() {
-//   return this->_pimpl->hasInvokedPerformValue;
-// }
-//     std::unique_ptr<CTXCommon::DataWrapper> performWithData() {
-//       return std::make_unique<CTXCommon::DataWrapper>(CTXCommon::DataWrapper(nullptr, 0));
-//     }
-
-    void MockedClient::performRequest(std::unique_ptr<CTXCommon::DataWrapper> request, std::function<void(std::unique_ptr<CTXCommon::DataWrapper> response)> callback) {
-      // this->_pimpl->hasInvokedPerformValue = true;
+    std::unique_ptr<CTXCommon::DataWrapper> Mock::MockedClient::performWithData() {
+      return std::make_unique<CTXCommon::DataWrapper>(CTXCommon::DataWrapper(nullptr, 0));
     }
-    std::string MockedClient::description() {
+
+    void Mock::MockedClient::performRequest(std::unique_ptr<CTXCommon::DataWrapper> request, std::function<void(std::unique_ptr<CTXCommon::DataWrapper> response)> callback) {
+      this->_pimpl->hasInvokedPerformValue = true;
+    }
+    std::string Mock::MockedClient::description() {
       return std::string("MockedClient");
     }

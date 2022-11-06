@@ -10,12 +10,12 @@ BOOST_AUTO_TEST_CASE(Client_Alpine)
     BOOST_CHECK(client != nullptr);
 
     // Since we're running on macOS, assume HTTP client will be ALPINE.
-    BOOST_CHECK(client->description().compare(std::string("AlpineClientImpl")) == 0);
+    BOOST_CHECK(client->description().compare(std::string("MockedClient")) == 0);
 }
 
 BOOST_AUTO_TEST_CASE(Returns_Mocked) 
 {
 
-    
+
 
 }
